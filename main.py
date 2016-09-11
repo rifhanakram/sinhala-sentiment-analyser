@@ -20,7 +20,7 @@ if __name__ == '__main__':
     #binary classification classes
     classes = ['pos','neg']
 
-    for curr_class in classes:
+    for current in classes:
         dirname = os.path.join(data_dir, curr_class)
         for fname in os.listdir(dirname):
             with open(os.path.join(dirname, fname), 'r') as f:               
