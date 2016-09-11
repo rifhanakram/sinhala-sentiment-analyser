@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     # Create feature vectors
     vectorizer = TfidfVectorizer(min_df=1,
-                                 max_df = 0.8,
+                                 max_df = 0.5,
                                  sublinear_tf=True,
                                  use_idf=True,decode_error='ignore')
 
