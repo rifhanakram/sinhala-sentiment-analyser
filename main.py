@@ -11,17 +11,14 @@ if __name__ == '__main__':
     # training data set directory
     data_dir = './trainData'
 
-    # Read the data
     train_data = []
     train_labels = []
     test_data = []
-
-
     #binary classification classes
     classes = ['pos','neg']
 
     for current in classes:
-        dirname = os.path.join(data_dir, curr_class)
+        dirname = os.path.join(data_dir, current)
         for fname in os.listdir(dirname):
             with open(os.path.join(dirname, fname), 'r') as f:               
                 content = f.read()
