@@ -3,12 +3,8 @@
 import sys
 import os
 
-
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
-
-
-
 
 if __name__ == '__main__':
 
@@ -21,7 +17,7 @@ if __name__ == '__main__':
     test_data = []
 
 
-    #sub folders with pos containing positive training data set and neg vice versa
+    #binary classification classes
     classes = ['pos','neg']
 
     for curr_class in classes:
@@ -29,9 +25,11 @@ if __name__ == '__main__':
         for fname in os.listdir(dirname):
             with open(os.path.join(dirname, fname), 'r') as f:               
                 content = f.read()
+                #if file is starting with pos append to training data as a positive statement
                 if fname.startswith('pos'):
                     train_data.append(content)
                     train_labels.append('positive')
+                # else it belongs to negative category
                 else :
                     train_data.append(content)
                     train_labels.append('negative')
@@ -50,8 +48,11 @@ if __name__ == '__main__':
     with open('test.txt','r') as testData:
         for line in testData:
             test_data.append(line);  
+            print " ==========start============= "
             print line
             print classifier_rbf.predict(vectorizer.transform(test_data)) 
+            print " ==========end============= \n"
+            
             test_data = []
 
 
