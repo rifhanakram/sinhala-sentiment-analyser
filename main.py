@@ -5,6 +5,7 @@ import os
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
+from sklearn.feature_extraction.text import CountVectorizer
 
 if __name__ == '__main__':
 
@@ -31,6 +32,17 @@ if __name__ == '__main__':
                     train_data.append(content)
                     train_labels.append('negative')
 
+    #CountVectorizer will find the number of occurences of a word in the test data.
+    count_vectorizer = CountVectorizer()
+    count_vectorizer.fit_transform(train_data)
+    vocabulary = count_vectorizer.vocabulary_
+
+    #print the vocabulary
+    print "\n\n===== Vocabulary ===="
+    for key in vocabulary:
+        print key, " : ", vocabulary[key] 
+    print "===== END: Vocabulary ====\n\n"
+    
     # Create feature vectors
     vectorizer = TfidfVectorizer(min_df=1,
                                  max_df = 0.5,
