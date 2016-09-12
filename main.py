@@ -45,7 +45,7 @@ if __name__ == '__main__':
     
     # Create feature vectors
     vectorizer = TfidfVectorizer(min_df=1,
-                                 max_df = 0.5,
+                                 max_df = 0.8,
                                  sublinear_tf=True,
                                  use_idf=True,decode_error='ignore')
 
@@ -53,17 +53,26 @@ if __name__ == '__main__':
     classifier_rbf = svm.SVC()
     classifier_rbf.fit(train_vectors, train_labels)
 
-    #read from test.txt file
-    with open('test.txt','r') as testData:
-        for line in testData:
-            test_data.append(line);  
-            print " ==========start============= "
-            print line
-            print classifier_rbf.predict(vectorizer.transform(test_data)) 
-            print " ==========end============= \n"
-            
-            test_data = []
-
-
-
+    #read from a given file or the default file
+    def readFromFile(file='test.txt'):
+        with open(file,'r') as testData:
+            execute(testData)
     
+    #read from a command line argument
+    def readFromSentence(sentence):
+        temp = [sentence]
+        execute(temp)
+
+    #execute the analyser
+    def execute(data):
+        for index, line in enumerate(data):
+            test_data.append(line);  
+            print '{}) {} : {}'.format(index + 1, line.strip('\n'), classifier_rbf.predict(vectorizer.transform(test_data))[0])
+            del test_data[:]
+
+    if len(sys.argv) == 1:
+        readFromFile()
+    elif len(sys.argv) == 3 and sys.argv[1] == '-f':
+        readFromFile(sys.argv[2])
+    elif len(sys.argv) == 3 and sys.argv[1] == '-s':
+        readFromSentence(sys.argv[2])
