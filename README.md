@@ -8,4 +8,5 @@ for each of its classification classes
 pip install sklearn </br>
 python main.py
 
-
+#Python Version
+2.7
