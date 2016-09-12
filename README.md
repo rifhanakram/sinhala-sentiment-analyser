@@ -5,7 +5,7 @@ The testing data is fed from the test.txt file, and the training data set in fed
 for each of its classification classes
 
 #Usage 
-pip install requirement.txt </br>
+pip install requirements.txt </br>
 python main.py
 
 #Python Version
