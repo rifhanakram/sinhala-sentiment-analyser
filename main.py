@@ -15,8 +15,9 @@ if __name__ == '__main__':
     train_data = []
     train_labels = []
     test_data = []
+    stop_words_data = []
     #binary classification classes
-    classes = ['pos','neg']
+    classes = ['pos','neg', 'stopwords']
 
     for current in classes:
         dirname = os.path.join(data_dir, current)
@@ -27,10 +28,12 @@ if __name__ == '__main__':
                 if fname.startswith('pos'):
                     train_data.append(content)
                     train_labels.append('positive')
-                # else it belongs to negative category
-                else :
+                #if it belongs to negative category
+                elif fname.startswith('neg') :
                     train_data.append(content)
                     train_labels.append('negative')
+                else:
+                    stop_words_data.append(content)
 
     #CountVectorizer will find the number of occurences of a word in the test data.
     count_vectorizer = CountVectorizer()
@@ -47,6 +50,7 @@ if __name__ == '__main__':
     vectorizer = TfidfVectorizer(min_df=1,
                                  max_df = 0.8,
                                  sublinear_tf=True,
+                                 stop_words=stop_words_data,
                                  use_idf=True,decode_error='ignore')
 
     train_vectors = vectorizer.fit_transform(train_data)
