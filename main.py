@@ -14,6 +14,7 @@ if __name__ == '__main__':
     train_data = []
     train_labels = []
     test_data = []
+    stop_words_data = []
     #binary classification classes
     classes = ['pos','neg']
 
@@ -31,10 +32,16 @@ if __name__ == '__main__':
                     train_data.append(content)
                     train_labels.append('negative')
 
+    #read stop words from a file
+    with open('stop-words.txt', 'r') as stopWordsData:
+        for line in stopWordsData:
+            stop_words_data.append(line + "\n");
+
     # Create feature vectors
     vectorizer = TfidfVectorizer(min_df=1,
                                  max_df = 0.8,
                                  sublinear_tf=True,
+                                 stop_words=stop_words_data,
                                  use_idf=True,decode_error='ignore')
 
     train_vectors = vectorizer.fit_transform(train_data)
