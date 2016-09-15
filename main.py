@@ -33,6 +33,7 @@ if __name__ == '__main__':
                     train_data.append(content)
                     train_labels.append('negative')
                 else:
+                    print content , "\n"
                     stop_words_data.append(content)
 
     #CountVectorizer will find the number of occurences of a word in the test data.
