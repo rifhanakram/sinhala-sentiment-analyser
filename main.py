@@ -33,7 +33,6 @@ if __name__ == '__main__':
                     train_data.append(content)
                     train_labels.append('negative')
                 else:
-                    print content , "\n"
                     stop_words_data.append(content)
 
     #CountVectorizer will find the number of occurences of a word in the test data.
@@ -41,12 +40,6 @@ if __name__ == '__main__':
     count_vectorizer.fit_transform(train_data)
     vocabulary = count_vectorizer.vocabulary_
 
-    #print the vocabulary
-    print "\n\n===== Vocabulary ===="
-    for key in vocabulary:
-        print key, " : ", vocabulary[key] 
-    print "===== END: Vocabulary ====\n\n"
-    
     # Create feature vectors
     vectorizer = TfidfVectorizer(min_df=1,
                                  max_df = 0.8,
@@ -68,6 +61,20 @@ if __name__ == '__main__':
         temp = [sentence]
         execute(temp)
 
+    #tokenize sentence to words
+    def visualizer(sentence):
+        words = sentence.split()
+        for word in words:
+            temp = [word]
+            drawTree(temp)
+    
+    def drawTree (data):
+        for line in data:
+            test_data.append(line);
+            decision = classifier_rbf.decision_function(vectorizer.transform(test_data));
+            print '{} : {} : {}'.format( line.strip('\n'), classifier_rbf.predict(vectorizer.transform(test_data))[0], decision)
+            del test_data[:]
+
     #execute the analyser
     def execute(data):
         for index, line in enumerate(data):
@@ -81,3 +88,5 @@ if __name__ == '__main__':
         readFromFile(sys.argv[2])
     elif len(sys.argv) == 3 and sys.argv[1] == '-s':
         readFromSentence(sys.argv[2])
+    elif len(sys.argv) == 3 and sys.argv[1] == '-v':
+        visualizer(sys.argv[2])
