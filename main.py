@@ -63,16 +63,22 @@ if __name__ == '__main__':
 
     #tokenize sentence to words
     def visualizer(sentence):
+        result = [[],[]]
         words = sentence.split()
         for word in words:
             temp = [word]
-            drawTree(temp)
+            buildTree(temp, result)
+        return result # use this to draw the tree
     
-    def drawTree (data):
+    def buildTree (data, result):   
         for line in data:
             test_data.append(line);
-            decision = classifier_rbf.decision_function(vectorizer.transform(test_data));
-            print '{} : {} : {}'.format( line.strip('\n'), classifier_rbf.predict(vectorizer.transform(test_data))[0], decision)
+            decision = classifier_rbf.decision_function(vectorizer.transform(test_data))[0]
+            prediction = classifier_rbf.predict(vectorizer.transform(test_data))[0]
+            if prediction == 'positive' and decision != 0:
+                result[0].append((line.strip('\n'),decision))
+            elif prediction == 'negative' and decision != 0:
+                result[1].append((line.strip('\n'),decision))
             del test_data[:]
 
     #execute the analyser
