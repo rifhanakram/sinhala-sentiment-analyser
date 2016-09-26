@@ -2,10 +2,12 @@
 # coding: utf-8
 import sys
 import os
+import pybst.avltree as pyavl
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
 from sklearn.feature_extraction.text import CountVectorizer
+from pybst.draw import plot_tree
 
 if __name__ == '__main__':
 
@@ -68,7 +70,7 @@ if __name__ == '__main__':
         for word in words:
             temp = [word]
             buildTree(temp, result)
-        return result # use this to draw the tree
+        plotTree(result)
     
     def buildTree (data, result):   
         for line in data:
@@ -76,15 +78,23 @@ if __name__ == '__main__':
             decision = classifier_rbf.decision_function(vectorizer.transform(test_data))[0]
             prediction = classifier_rbf.predict(vectorizer.transform(test_data))[0]
             if prediction == 'positive' and decision != 0:
-                result[0].append((line.strip('\n'),decision))
+                result[0].append((line.strip('\n'), decision))
             elif prediction == 'negative' and decision != 0:
-                result[1].append((line.strip('\n'),decision))
+                result[1].append((line.strip('\n'), decision))
             del test_data[:]
+
+    #plots and displays the tree
+    def plotTree(nodes):
+        tree = pyavl.AVLTree()
+        for node in nodes:
+            for nod in node:
+                tree.insert(nod[1], node[0])
+        plot_tree(tree)
 
     #execute the analyser
     def execute(data):
         for index, line in enumerate(data):
-            test_data.append(line);  
+            test_data.append(line)
             print '{}) {} : {}'.format(index + 1, line.strip('\n'), classifier_rbf.predict(vectorizer.transform(test_data))[0])
             del test_data[:]
 
