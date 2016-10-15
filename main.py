@@ -84,7 +84,7 @@ if __name__ == '__main__':
                 NNgrammer = "NP: {<JJ>?<JJ>*<NN>}"
                 parser = RegexpParser(NNgrammer)
                 result = parser.parse(sentence)
-
+                print result
                 del test[:]
             print sentence
 
