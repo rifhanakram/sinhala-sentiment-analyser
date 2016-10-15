@@ -6,103 +6,99 @@ import pybst.avltree as pyavl
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
+from nltk.chunk import *
+from nltk.chunk.util import *
+from nltk.chunk.regexp import *
+from nltk import Tree
+
 from sklearn.feature_extraction.text import CountVectorizer
-from pybst.draw import plot_tree
+from re import compile as _Re
+#from pybst.draw import plot_tree
 
 if __name__ == '__main__':
 
     # training data set directory
     data_dir = './trainData'
 
-    train_data = []
-    train_labels = []
+    jj_train_data = []
+    jj_train_labels = []
+
+    nn_train_data = []
+    nn_train_labels = []
+
+    vb_train_data = []
+    vb_train_labels = []
+
+
     test_data = []
-    stop_words_data = []
+
     #binary classification classes
-    classes = ['pos','neg', 'stopwords']
+    classes = ['noun', 'adjective']
 
     for current in classes:
         dirname = os.path.join(data_dir, current)
         for fname in os.listdir(dirname):
-            with open(os.path.join(dirname, fname), 'r') as f:               
+            with open(os.path.join(dirname, fname), 'r') as f:
                 content = f.read()
                 #if file is starting with pos append to training data as a positive statement
-                if fname.startswith('pos'):
-                    train_data.append(content)
-                    train_labels.append('positive')
+                if fname.startswith('adjective'):
+                    jj_train_data.append(content)
+                    jj_train_labels.append('JJ')
                 #if it belongs to negative category
-                elif fname.startswith('neg') :
-                    train_data.append(content)
-                    train_labels.append('negative')
-                else:
-                    stop_words_data.append(content)
-
-    #CountVectorizer will find the number of occurences of a word in the test data.
-    count_vectorizer = CountVectorizer()
-    count_vectorizer.fit_transform(train_data)
-    vocabulary = count_vectorizer.vocabulary_
+                elif fname.startswith('noun') :
+                    jj_train_data.append(content)
+                    jj_train_labels.append('NN')
+                elif fname.startswith('verb') :
+                    jj_train_data.append(content)
+                    jj_train_labels.append('VB')
 
     # Create feature vectors
-    vectorizer = TfidfVectorizer(min_df=1,
-                                 max_df = 0.8,
+    jj_vectorizer = TfidfVectorizer(min_df=1,
+                                 max_df = 0.5,
                                  sublinear_tf=True,
-                                 stop_words=stop_words_data,
                                  use_idf=True,decode_error='ignore')
 
-    train_vectors = vectorizer.fit_transform(train_data)
-    classifier_rbf = svm.SVC()
-    classifier_rbf.fit(train_vectors, train_labels)
+    #classifier for adjectives
+    jj_train_vectors = jj_vectorizer.fit_transform(jj_train_data)
+    jj_classifier_rbf = svm.SVC()
+    jj_classifier_rbf.fit(jj_train_vectors, jj_train_labels)
 
+
+    #
     #read from a given file or the default file
     def readFromFile(file='test.txt'):
         with open(file,'r') as testData:
             execute(testData)
-    
-    #read from a command line argument
-    def readFromSentence(sentence):
-        temp = [sentence]
-        execute(temp)
 
-    #tokenize sentence to words
-    def visualizer(sentence):
-        result = [[],[]]
-        words = sentence.split()
-        for word in words:
-            temp = [word]
-            buildTree(temp, result)
-        plotTree(result)
-    
-    def buildTree (data, result):   
-        for line in data:
-            test_data.append(line);
-            decision = classifier_rbf.decision_function(vectorizer.transform(test_data))[0]
-            prediction = classifier_rbf.predict(vectorizer.transform(test_data))[0]
-            if prediction == 'positive' and decision != 0:
-                result[0].append((line.strip('\n'), decision))
-            elif prediction == 'negative' and decision != 0:
-                result[1].append((line.strip('\n'), decision))
-            del test_data[:]
-
-    #plots and displays the tree
-    def plotTree(nodes):
-        tree = pyavl.AVLTree()
-        for node in nodes:
-            for nod in node:
-                tree.insert(nod[1], node[0])
-        plot_tree(tree)
-
-    #execute the analyser
+    # #execute the analyser
     def execute(data):
+        sentence = []
         for index, line in enumerate(data):
-            test_data.append(line)
-            print '{}) {} : {}'.format(index + 1, line.strip('\n'), classifier_rbf.predict(vectorizer.transform(test_data))[0])
-            del test_data[:]
+            for word in line.decode("utf-8").split():
+                test = []
+                temp = word.encode("utf-8")
+                test.append(temp)
+                #resultNN = nn_classifier_rbf.predict(nn_vectorizer.transform(test))[0]
+                resultJJ = jj_classifier_rbf.predict(jj_vectorizer.transform(test))[0]
+                sentence.append((temp.decode("utf-8"), resultJJ))
+                NNgrammer = "NP: {<JJ>?<JJ>*<NN>}"
+                parser = RegexpParser(NNgrammer)
+                result = parser.parse(sentence)
 
+                del test[:]
+            print sentence
+
+
+
+    #
+    #
+    #
+    #
     if len(sys.argv) == 1:
         readFromFile()
-    elif len(sys.argv) == 3 and sys.argv[1] == '-f':
-        readFromFile(sys.argv[2])
-    elif len(sys.argv) == 3 and sys.argv[1] == '-s':
-        readFromSentence(sys.argv[2])
-    elif len(sys.argv) == 3 and sys.argv[1] == '-v':
-        visualizer(sys.argv[2])
+    # elif len(sys.argv) == 3 and sys.argv[1] == '-f':
+    #     readFromFile(sys.argv[2])
+    # elif len(sys.argv) == 3 and sys.argv[1] == '-s':
+    #     readFromSentence(sys.argv[2])
+    # # elif len(sys.argv) == 3 and sys.argv[1] == '-v':
+    # #     #visualizer(sys.argv[2])

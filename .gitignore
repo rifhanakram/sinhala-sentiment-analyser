@@ -1,2 +1,3 @@
 # Ignore python virtual environment
 env/
+.idea/*
