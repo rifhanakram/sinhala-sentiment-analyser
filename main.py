@@ -2,18 +2,10 @@
 # coding: utf-8
 import sys
 import os
-import pybst.avltree as pyavl
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
-from nltk.chunk import *
-from nltk.chunk.util import *
 from nltk.chunk.regexp import *
-from nltk import Tree
-
-from sklearn.feature_extraction.text import CountVectorizer
-from re import compile as _Re
-#from pybst.draw import plot_tree
 
 if __name__ == '__main__':
 
@@ -28,7 +20,6 @@ if __name__ == '__main__':
 
     vb_train_data = []
     vb_train_labels = []
-
 
     test_data = []
 
@@ -63,8 +54,6 @@ if __name__ == '__main__':
     jj_classifier_rbf = svm.SVC()
     jj_classifier_rbf.fit(jj_train_vectors, jj_train_labels)
 
-
-    #
     #read from a given file or the default file
     def readFromFile(file='test.txt'):
         with open(file,'r') as testData:
@@ -73,27 +62,20 @@ if __name__ == '__main__':
     # #execute the analyser
     def execute(data):
         sentence = []
+        result = None
         for index, line in enumerate(data):
-            for word in line.decode("utf-8").split():
-                test = []
-                temp = word.encode("utf-8")
-                test.append(temp)
-                #resultNN = nn_classifier_rbf.predict(nn_vectorizer.transform(test))[0]
-                resultJJ = jj_classifier_rbf.predict(jj_vectorizer.transform(test))[0]
-                sentence.append((temp.decode("utf-8"), resultJJ))
-                NNgrammer = "NP: {<JJ>?<JJ>*<NN>}"
-                parser = RegexpParser(NNgrammer)
+            for word in line.split():
+                test = [word]
+                result_jj = jj_classifier_rbf.predict(jj_vectorizer.transform(test))[0]
+                sentence.append((word.decode("utf-8"), result_jj))
+                nn_grammar = "NP: {<JJ>?<JJ>*<NN>}"
+                parser = RegexpParser(nn_grammar)
                 result = parser.parse(sentence)
-                print result
                 del test[:]
-            print sentence
+        for word in sentence:
+            print (word[0] + ": " + word[1])
+        print result.draw()
 
-
-
-    #
-    #
-    #
-    #
     if len(sys.argv) == 1:
         readFromFile()
     # elif len(sys.argv) == 3 and sys.argv[1] == '-f':
