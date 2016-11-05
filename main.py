@@ -2,6 +2,7 @@
 # coding: utf-8
 import sys
 import os
+import json
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn import svm
@@ -31,15 +32,16 @@ if __name__ == '__main__':
         for fname in os.listdir(dirname):
             with open(os.path.join(dirname, fname), 'r') as f:
                 content = f.read()
-                #if file is starting with pos append to training data as a positive statement
                 if fname.startswith('adjective'):
                     jj_train_data.append(content)
                     jj_train_labels.append('JJ')
-                #if it belongs to negative category
-                elif fname.startswith('noun') :
+                elif fname.startswith('adverb'):
+                    jj_train_data.append(content)
+                    jj_train_labels.append('AV')
+                elif fname.startswith('noun'):
                     jj_train_data.append(content)
                     jj_train_labels.append('NN')
-                elif fname.startswith('verb') :
+                elif fname.startswith('verb'):
                     jj_train_data.append(content)
                     jj_train_labels.append('VB')
 
@@ -59,21 +61,28 @@ if __name__ == '__main__':
         with open(file,'r') as testData:
             execute(testData)
 
-    # #execute the analyser
+    #execute the analyser
     def execute(data):
         sentence = []
+        sen = {}
         result = None
         for index, line in enumerate(data):
             for word in line.split():
                 test = [word]
                 result_jj = jj_classifier_rbf.predict(jj_vectorizer.transform(test))[0]
                 sentence.append((word.decode("utf-8"), result_jj))
-                nn_grammar = "NP: {<JJ>?<JJ>*<NN>}"
-                parser = RegexpParser(nn_grammar)
+                test_dict = {result_jj: word.decode("utf-8")}
+                z = test_dict.copy()
+                sen.update(z)
+                del test_dict
+                parser = RegexpParser('''
+                    NP: {<NN>?<JJ>*<NN>}
+                    VP: {<VB> <NP|AV>*}
+                ''')
                 result = parser.parse(sentence)
                 del test[:]
         for word in sentence:
-            print (word[0] + ": " + word[1])
+            print(word[0] + ": " + word[1])
         print result.draw()
 
     if len(sys.argv) == 1:
