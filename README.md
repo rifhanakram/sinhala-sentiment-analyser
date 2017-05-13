@@ -2,8 +2,8 @@
 A Simple Sinhalese sentiment anaylzer using the SVM algorithm from scikit learn
 
 Note : This application is still in a primitive stage and does have various flaws which will be addressed incrementally in future versions.
-The testing data is fed from the test.txt file, and the training data set in fed from the trainData directory which consists of sub directories
-for each of its classification classes
+The testing data is fed from the test.txt file, and the training data set is fed from the trainData directory which consists of sub directories
+for each of its classes
 
 #### Dependencies
     -python 2.7
@@ -16,7 +16,7 @@ for each of its classification classes
 ```sh
 $ pip install sklearn 
 ```
-#### Application Usage
+#### Usage
 
 ```sh
 #run the default tests
